@@ -1,7 +1,8 @@
 import React from "react";
 import classes from "./BuildControls.css";
 import BuildControl from "./BuildControl/BuildControl";
-
+import { Button } from "semantic-ui-react";
+import { Label } from "semantic-ui-react";
 const controls = [
   { label: "Salad", type: "salad" },
   { label: "Meat", type: "meat" },
@@ -12,9 +13,11 @@ const controls = [
 const buildControls = props => {
   return (
     <div className={classes.BuildControls}>
-      <p>
-        Current Price: <strong>${props.price.toFixed(2)}</strong>
-      </p>
+      <Label.Group tag>
+        <Label color="red" as="a">
+          Price: ${props.price.toFixed(2)}
+        </Label>
+      </Label.Group>
       {controls.map(ctrl => (
         <BuildControl
           key={ctrl.label}
@@ -24,13 +27,15 @@ const buildControls = props => {
           disabled={props.disabled[ctrl.type]}
         />
       ))}
-      <button
+      <br />
+      <Button
+        primary
         onClick={props.ordered}
         disabled={!props.purchaseable}
         className={classes.OrderButton}
       >
         Order Now
-      </button>
+      </Button>
     </div>
   );
 };
