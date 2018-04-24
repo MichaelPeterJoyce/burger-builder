@@ -24,9 +24,20 @@ class BurgerBuilder extends Component {
     },
     totalPrice: 2,
     purchaseable: false,
-    purchasing: false
+    purchasing: false,
+    error: null
   };
 
+  componentDidMount() {
+    axios
+      .get("https://react-my-burger-2c544.firebaseio.com/ingredients.json")
+      .then(res => {
+        this.setState({ ingredients: res.data });
+      })
+      .catch(error => {
+        this.setState({ error: true });
+      });
+  }
   purchaseHandler = type => {
     this.setState({ purchasing: true });
   };
@@ -113,6 +124,38 @@ class BurgerBuilder extends Component {
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
+    let orderSummary = null;
+    let burger = this.state.error ? (
+      <p>Ingredients can't be loaded!</p>
+    ) : (
+      <Dimmer inverted active={this.state.loading}>
+        <Loader inverted>Loading</Loader>
+      </Dimmer>
+    );
+    if (this.state.ingredients) {
+      burger = (
+        <Aux>
+          <Burger ingredients={this.state.ingredients} />
+          <BuildControls
+            ingredientAdded={this.addIngredientHandler}
+            ingredientRemoved={this.removeIngredientHandler}
+            disabled={disabledInfo}
+            price={this.state.totalPrice}
+            purchaseable={this.state.purchaseable}
+            ordered={this.purchaseHandler}
+          />
+        </Aux>
+      );
+
+      orderSummary = (
+        <OrderSummary
+          cancel={this.purchaseCancelHandler}
+          continue={this.purchaseContinueHandler}
+          ingredients={this.state.ingredients}
+          price={this.state.totalPrice}
+        />
+      );
+    }
     return (
       <Aux>
         <Modal
@@ -123,23 +166,12 @@ class BurgerBuilder extends Component {
           <Dimmer inverted active={this.state.loading}>
             <Loader inverted>Loading</Loader>
           </Dimmer>
-
-          <OrderSummary
-            cancel={this.purchaseCancelHandler}
-            continue={this.purchaseContinueHandler}
-            ingredients={this.state.ingredients}
-            price={this.state.totalPrice}
-          />
+          {orderSummary}
         </Modal>
-        <Burger ingredients={this.state.ingredients} />
-        <BuildControls
-          ingredientAdded={this.addIngredientHandler}
-          ingredientRemoved={this.removeIngredientHandler}
-          disabled={disabledInfo}
-          price={this.state.totalPrice}
-          purchaseable={this.state.purchaseable}
-          ordered={this.purchaseHandler}
-        />
+        <Dimmer inverted active={!this.state.ingredients}>
+          <Loader inverted>Loading</Loader>
+        </Dimmer>
+        {burger}
       </Aux>
     );
   }
