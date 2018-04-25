@@ -6,7 +6,7 @@ import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import axios from "../../axios-orders";
-import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
+import { Dimmer, Loader } from "semantic-ui-react";
 
 const INGREDIENT_PRICES = {
   salad: 0.2,
@@ -91,30 +91,31 @@ class BurgerBuilder extends Component {
   };
 
   purchaseContinueHandler = () => {
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: "Michael",
-        address: {
-          street: "123 Street",
-          zipCode: "12132",
-          country: "Ireland"
-        },
-        email: "michael.j@gmail.com"
-      },
-      deliveryMethod: "fastest",
-      date: new Date()
-    };
-    this.setState({ loading: true });
-    axios
-      .post("/orders.json", order)
-      .then(response => {
-        this.setState({ loading: false, purchasing: false });
-      })
-      .catch(error => {
-        this.setState({ loading: false, purchasing: false });
-      });
+    this.props.history.push('/checkout');
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: "Michael",
+    //     address: {
+    //       street: "123 Street",
+    //       zipCode: "12132",
+    //       country: "Ireland"
+    //     },
+    //     email: "michael.j@gmail.com"
+    //   },
+    //   deliveryMethod: "fastest",
+    //   date: new Date()
+    // };
+    // this.setState({ loading: true });
+    // axios
+    //   .post("/orders.json", order)
+    //   .then(response => {
+    //     this.setState({ loading: false, purchasing: false });
+    //   })
+    //   .catch(error => {
+    //     this.setState({ loading: false, purchasing: false });
+    //   });
   };
 
   render() {
